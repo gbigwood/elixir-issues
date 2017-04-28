@@ -1,6 +1,6 @@
 defmodule Issues.CLI do
   @default_count 4
-  @moduldedoc """
+  @moduledoc """
   Handle our command line parsing and the dispatch to the various functions
   that end up generating a table of the last _n_ issues in a github project.
   """
@@ -25,7 +25,7 @@ defmodule Issues.CLI do
         -> :help
 
       { _, [ user, project, count ], _ }
-        -> { user, project, count }
+        -> { user, project, String.to_integer(count) }
 
       { _, [ user, project ], _ }
         -> { user, project, @default_count }
