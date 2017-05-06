@@ -57,9 +57,9 @@ defmodule Issues.CLI do
       fn i1,i2 -> Map.get(i1, "created_at") <= Map.get(i2, "created_at") end
   end
 
-  def decode_response({:ok, body}), do: body
+  defp decode_response({:ok, body}), do: body
 
-  def decode_response({:error, error}) do
+  defp decode_response({:error, error}) do
     {_, message} = List.keyfind(error, "message", 0)
     IO.puts "Error fetching from Github #{message}"
     System.halt(2)
