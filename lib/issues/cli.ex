@@ -5,7 +5,9 @@ defmodule Issues.CLI do
   that end up generating a table of the last _n_ issues in a github project.
   """
 
-  def run(argv) do
+  import Issues.TableFormatter, only: [ print_table_for_columns: 2] 
+
+  def main(argv) do
     argv
     |> parse_args
     |> process 
@@ -42,10 +44,12 @@ defmodule Issues.CLI do
     System.halt(0)
   end
 
-  def process({user, project, _count}) do
+  def process({user, project, count}) do
     Issues.GithubIssues.fetch(user, project)
     |> decode_response
     |> sort_into_ascending_order
+    |> Enum.take(count)
+    |> print_table_for_columns(["number", "created_at", "title"])
   end
 
   def sort_into_ascending_order(list_of_issues) do
@@ -56,7 +60,7 @@ defmodule Issues.CLI do
   def decode_response({:ok, body}), do: body
 
   def decode_response({:error, error}) do
-    {_, message}= List.keyfind(error, "message", 0)
+    {_, message} = List.keyfind(error, "message", 0)
     IO.puts "Error fetching from Github #{message}"
     System.halt(2)
   end
